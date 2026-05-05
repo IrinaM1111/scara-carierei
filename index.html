@@ -1040,7 +1040,7 @@ function goToResults(){
   html+='<button class="btn-send no-print" id="sendReportBtn" onclick="sendReport()">📤 Trimite raportul către DCOC</button>';
   html+='<div class="send-success" id="sendSuccess">✅ Raport trimis cu succes! Mulțumim!</div>';
   html+='<div class="send-error" id="sendError">❌ Eroare la trimitere. Încearcă din nou.</div>';
-  html+='<button class="btn-back-game no-print" onclick="showScreen(\'s-game\')">← Înapoi la joc</button>';
+  html+="<button class='btn-back-game no-print' onclick='showScreen(&quot;s-game&quot;)'>← Înapoi la joc</button>";
 
   document.getElementById('resultContent').innerHTML=html;
   showScreen('s-result');
@@ -1054,7 +1054,7 @@ function savePDF(){
 
 /* ── SEND REPORT TO GOOGLE SHEETS ── */
 /* ⚠️ Înlocuiește URL-ul de mai jos cu URL-ul tău Google Apps Script */
-var GOOGLE_SCRIPT_URL = https://script.google.com/macros/s/AKfycbxlK_d56Tcp2Ec3QHuS0w1mjKkbPAJP0KlFucEjd24PJCV9aD-N6XDzarQSo1FPyGVv/exec;
+var GOOGLE_SCRIPT_URL = 'PUNE_AICI_URL_GOOGLE_APPS_SCRIPT';
 
 function sendReport(){
   var btn=document.getElementById('sendReportBtn');
