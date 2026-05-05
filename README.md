@@ -1,2 +1,1229 @@
-# scara-carierei
-Board game consiliere cariera DCOC
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#4A1D96">
+<title>Scara Carierei — DCOC</title>
+<style>
+:root{
+  --purple:#6B21A8;--purple2:#7C3AED;--purple-light:#EDE9FE;--purple-xlight:#FAF5FF;
+  --teal:#00695C;--teal-light:#E0F2F1;
+  --blue:#1A237E;--blue-light:#E8EAF6;
+  --orange:#E65100;--orange-light:#FFF3E0;
+  --green:#2E7D32;--green-light:#C8E6C9;
+  --red:#C62828;--red-light:#FFEBEE;
+  --gold:#F9A825;--gold-light:#FFF9C4;
+  --fb:#1877F2;
+  --radius:16px;--radius-sm:10px;--radius-xs:8px;
+  --shadow:0 2px 16px rgba(0,0,0,.1);
+  --shadow-lg:0 8px 32px rgba(0,0,0,.18);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{font-size:16px;-webkit-text-size-adjust:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:#F8F4FF;color:#111;min-height:100vh;overflow-x:hidden}
+button,input{font-family:inherit;-webkit-appearance:none;appearance:none}
+button{cursor:pointer;border:none;background:none;padding:0}
+input{outline:none}
+img{max-width:100%;display:block}
+
+/* ── SCREENS ── */
+.screen{display:none}
+.screen.active{display:block}
+#s-landing.active{display:flex!important;flex-direction:column;align-items:center}
+#s-join.active{display:flex!important;flex-direction:column;align-items:center}
+#s-game.active{display:flex!important;flex-direction:column}
+#s-quiz.active{display:flex!important;flex-direction:column;align-items:center}
+#s-result.active{display:flex!important;flex-direction:column;align-items:center}
+/* merged */
+/* merged */
+/* merged */
+
+/* ── LANDING ── */
+#s-landing{background:linear-gradient(160deg,#4A1D96 0%,#6B21A8 50%,#7C3AED 100%);padding:2rem 1.25rem 3rem;text-align:center}
+.land-logo{width:100px;margin:0 auto 1.25rem}
+.land-title{font-size:2.2rem;font-weight:900;color:#fff;line-height:1.1;margin-bottom:.5rem}
+.land-sub{font-size:.95rem;color:rgba(255,255,255,.75);margin-bottom:2rem;line-height:1.5}
+.land-cards{display:flex;flex-direction:column;gap:.75rem;width:100%;max-width:420px;margin:0 auto 2rem}
+.land-card{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:var(--radius);padding:1rem 1.25rem;text-align:left;display:flex;align-items:flex-start;gap:.875rem}
+.land-card-icon{font-size:1.75rem;flex-shrink:0;margin-top:2px}
+.land-card-title{font-size:.95rem;font-weight:800;color:#fff;margin-bottom:3px}
+.land-card-desc{font-size:.8rem;color:rgba(255,255,255,.7);line-height:1.4}
+.btn-main{background:#fff;color:var(--purple);border-radius:50px;padding:.875rem 2.5rem;font-size:1.05rem;font-weight:800;width:100%;max-width:340px;box-shadow:var(--shadow-lg);transition:transform .15s,box-shadow .15s}
+.btn-main:active{transform:scale(.97);box-shadow:0 2px 8px rgba(0,0,0,.15)}
+
+/* ── JOIN ── */
+#s-join{background:#F8F4FF;padding:1.5rem 1.25rem 2rem}
+.join-header{text-align:center;margin-bottom:1.75rem}
+.join-title{font-size:1.6rem;font-weight:900;color:var(--purple);margin-bottom:.375rem}
+.join-sub{font-size:.875rem;color:#666;line-height:1.4}
+.join-form{width:100%;max-width:420px;display:flex;flex-direction:column;gap:1rem}
+.join-input-wrap{position:relative}
+.join-input{width:100%;padding:1rem 1.25rem;border:2.5px solid #D8B4FE;border-radius:var(--radius);font-size:1rem;font-weight:700;color:#111;background:#fff;transition:border-color .15s}
+.join-input:focus{border-color:var(--purple)}
+.join-input::placeholder{color:#aaa;font-weight:400}
+.btn-purple{background:var(--purple);color:#fff;border-radius:50px;padding:.875rem 1.5rem;font-size:1rem;font-weight:800;width:100%;box-shadow:var(--shadow);transition:transform .15s,background .15s}
+.btn-purple:active{transform:scale(.97);background:var(--purple2)}
+.btn-outline{background:#fff;color:var(--purple);border:2px solid #D8B4FE;border-radius:50px;padding:.75rem 1.5rem;font-size:.9rem;font-weight:700;width:100%;transition:border-color .15s}
+.btn-outline:active{border-color:var(--purple)}
+.avatar-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:.5rem;margin:.25rem 0}
+.av-btn{font-size:1.75rem;padding:.5rem;border-radius:var(--radius-xs);background:#fff;border:2.5px solid #eee;transition:border-color .15s,background .15s;aspect-ratio:1;display:flex;align-items:center;justify-content:center}
+.av-btn.selected{border-color:var(--purple);background:var(--purple-light)}
+.section-label{font-size:.75rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#888;margin-bottom:.5rem}
+
+/* ── GAME ── */
+#s-game{background:#fff}
+.game-topbar{background:linear-gradient(135deg,#4A1D96,#6B21A8);padding:.875rem 1rem;display:flex;align-items:center;gap:.75rem;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(74,29,150,.3)}
+.topbar-logo{width:36px;height:36px;border-radius:8px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.topbar-logo img{width:28px}
+.topbar-title{font-size:1rem;font-weight:900;color:#fff;flex:1}
+.topbar-sub{font-size:.7rem;color:rgba(255,255,255,.65)}
+.topbar-btn{background:rgba(255,255,255,.15);color:#fff;border-radius:8px;padding:.4rem .75rem;font-size:.75rem;font-weight:700;flex-shrink:0}
+
+/* TABS */
+.game-tabs{display:flex;background:#F3E8FF;border-bottom:2px solid #D8B4FE;position:sticky;top:64px;z-index:99}
+.tab-btn{flex:1;padding:.75rem .5rem;font-size:.8rem;font-weight:800;color:#7C3AED;border-bottom:3px solid transparent;transition:all .15s;background:none;text-align:center}
+.tab-btn.active{color:var(--purple);border-bottom-color:var(--purple);background:#FAF5FF}
+.tab-content{display:none;padding:1rem;flex:1}
+.tab-content.active{display:block}
+
+/* BOARD */
+.board-label{font-size:.7rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#888;text-align:center;padding:.5rem 0;margin-bottom:.5rem}
+.board-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:3px}
+.cell{border-radius:8px;padding:3px 2px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;border:2px solid #e5e5e5;background:#fafafa;min-height:52px;position:relative;overflow:hidden}
+.cn{font-size:7px;font-weight:800;color:#ccc;line-height:1;align-self:flex-start;padding-left:1px}
+.ci{font-size:16px;line-height:1;margin:1px 0}
+.cl{font-size:7px;text-align:center;line-height:1.1;font-weight:800;color:#999;padding:0 1px}
+.ctoks{display:flex;flex-wrap:wrap;gap:1px;justify-content:center;margin-top:auto;padding-top:1px}
+.tok-av{font-size:13px;line-height:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.25))}
+.cs{background:linear-gradient(135deg,#FFF9C4,#FFE082)!important;border-color:#F9A825!important}.cs .cl{color:#E65100}
+.cf{background:linear-gradient(135deg,#C8E6C9,#A5D6A7)!important;border-color:#2E7D32!important}.cf .cl{color:#1B5E20}
+.cq1{background:linear-gradient(135deg,#E8EAF6,#C5CAE9)!important;border:2.5px solid #3949AB!important}
+.cq2{background:linear-gradient(135deg,#E0F2F1,#B2DFDB)!important;border:2.5px solid #00695C!important}
+.cq3{background:linear-gradient(135deg,#FFF3E0,#FFE0B2)!important;border:2.5px solid #E65100!important}
+.cq1 .cl{color:#1A237E}.cq2 .cl{color:#004D40}.cq3 .cl{color:#BF360C}
+.cboost{background:linear-gradient(135deg,#F1F8E9,#DCEDC8)!important;border-color:#558B2F!important}.cboost .cl{color:#33691E}
+.cback{background:linear-gradient(135deg,#FFEBEE,#FFCDD2)!important;border-color:#C62828!important}.cback .cl{color:#B71C1C}
+.crest{background:linear-gradient(135deg,#F3E5F5,#E1BEE7)!important;border-color:#6A1B9A!important}.crest .cl{color:#4A148C}
+.cfloor{background:linear-gradient(135deg,#FFF8E1,#FFECB3)!important;border-color:#FF8F00!important}.cfloor .cl{color:#E65100}
+.leg-wrap{display:flex;flex-wrap:wrap;gap:5px;padding:.75rem 0 .25rem}
+.leg{font-size:.65rem;padding:3px 8px;border-radius:20px;font-weight:800;border:1.5px solid transparent}
+
+/* DICE PANEL */
+.dice-panel{background:linear-gradient(135deg,#4A1D96,#6B21A8);border-radius:var(--radius);padding:1.25rem;margin-bottom:.875rem}
+.turn-row{display:flex;align-items:center;gap:.75rem;margin-bottom:1rem}
+.turn-avatar{font-size:2.25rem;filter:drop-shadow(0 2px 4px rgba(0,0,0,.3))}
+.turn-name{font-size:1.05rem;font-weight:900;color:#fff;line-height:1.2}
+.turn-pos{font-size:.75rem;color:rgba(255,255,255,.65)}
+.dice-row{display:flex;gap:.625rem;justify-content:center;margin-bottom:.875rem}
+.die{width:56px;height:56px;background:#fff;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:900;color:#111;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.die.rolling{animation:dr .5s ease}
+@keyframes dr{0%,100%{transform:rotate(0)}25%{transform:rotate(-15deg) scale(1.1)}75%{transform:rotate(15deg) scale(1.1)}}
+.total-lbl{text-align:center;font-size:1.3rem;font-weight:900;color:#F0D080;min-height:24px;margin-bottom:.75rem}
+.btn-roll{background:#F9A825;color:#000;border-radius:50px;padding:1rem;font-size:1.1rem;font-weight:900;width:100%;box-shadow:0 4px 16px rgba(249,168,37,.4);transition:transform .12s,box-shadow .12s}
+.btn-roll:active{transform:scale(.96);box-shadow:0 2px 8px rgba(249,168,37,.3)}
+.btn-roll:disabled{opacity:.3;transform:none;box-shadow:none}
+
+/* PLAYERS LIST */
+.players-section{background:#fff;border-radius:var(--radius);border:2px solid #E9D5FF;overflow:hidden;margin-bottom:.875rem}
+.players-header{background:var(--purple-light);padding:.75rem 1rem;display:flex;align-items:center;justify-content:space-between}
+.players-header-title{font-size:.8rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--purple)}
+.players-header-count{font-size:.8rem;font-weight:700;color:var(--purple2);background:#fff;padding:2px 10px;border-radius:20px}
+.player-row{display:flex;align-items:center;gap:.75rem;padding:.875rem 1rem;border-bottom:1px solid #F3E8FF}
+.player-row:last-child{border-bottom:none}
+.player-row.active-p{background:#FAF5FF}
+.p-av{font-size:1.5rem;flex-shrink:0}
+.p-info{flex:1;min-width:0}
+.p-name{font-size:.95rem;font-weight:800;color:#111;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.p-pos{font-size:.75rem;color:#888;font-weight:600}
+.p-qr{display:flex;gap:3px;flex-shrink:0}
+.qpip{width:10px;height:10px;border-radius:3px;background:#eee;border:1.5px solid #ddd}
+.qpip.q1{background:#3949AB;border-color:#3949AB}
+.qpip.q2{background:#00695C;border-color:#00695C}
+.qpip.q3{background:#E65100;border-color:#E65100}
+.qpip.pending{background:#FF6F00;animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.p-fin{font-size:.7rem;font-weight:800;color:#2E7D32;background:#C8E6C9;padding:2px 7px;border-radius:10px}
+
+/* ADD PLAYER in tab */
+.add-player-card{background:#fff;border-radius:var(--radius);border:2px solid #E9D5FF;padding:1rem;margin-bottom:.875rem}
+.add-player-card .section-label{margin-bottom:.625rem}
+.add-inline{display:flex;gap:.5rem}
+.add-inline input{flex:1;padding:.75rem 1rem;border:2px solid #ddd;border-radius:var(--radius-xs);font-size:.9rem;font-weight:700;color:#111}
+.add-inline input:focus{border-color:var(--purple)}
+.add-inline button{background:var(--purple);color:#fff;border-radius:var(--radius-xs);padding:.75rem 1rem;font-size:.85rem;font-weight:800;flex-shrink:0}
+
+/* LOG */
+.log-card{background:#fff;border-radius:var(--radius);border:2px solid #E9D5FF;overflow:hidden;margin-bottom:.875rem}
+.log-header{background:var(--purple-light);padding:.625rem 1rem;font-size:.75rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--purple)}
+.log-entries{padding:.5rem;max-height:160px;overflow-y:auto;display:flex;flex-direction:column;gap:2px}
+.log-e{font-size:.8rem;color:#555;padding:4px 6px;border-radius:6px;line-height:1.4;font-weight:600}
+.log-e:nth-child(odd){background:#FAF5FF}
+.log-e b{color:#111}
+
+/* CHECKPOINT CARDS */
+.cp-cards{display:flex;flex-direction:column;gap:.625rem;margin-bottom:.875rem}
+.cp-card{display:flex;align-items:center;gap:.75rem;padding:.875rem 1rem;border-radius:var(--radius);border:2px solid transparent}
+.cp-card.c1{background:#E8EAF6;border-color:#3949AB}
+.cp-card.c2{background:#E0F2F1;border-color:#00695C}
+.cp-card.c3{background:#FFF3E0;border-color:#E65100}
+.cp-icon{font-size:1.5rem;flex-shrink:0}
+.cp-info{flex:1}
+.cp-name{font-size:.9rem;font-weight:800;color:#111}
+.cp-sub{font-size:.75rem;color:#666;font-weight:600}
+
+/* ADMIN */
+.admin-strip{background:#FFF3E0;border:2px solid #E65100;border-radius:var(--radius-xs);padding:.625rem 1rem;font-size:.8rem;font-weight:800;color:#E65100;text-align:center;display:none;margin-bottom:.875rem}
+.admin-strip.show{display:block}
+
+/* ── QUIZ ── */
+.quiz-wrap{width:100%;max-width:560px;padding:1rem 1rem 2rem}
+.quiz-topbar{display:flex;align-items:center;gap:.75rem;margin-bottom:1rem}
+.quiz-back{background:#fff;color:var(--purple);border:2px solid #D8B4FE;border-radius:var(--radius-xs);padding:.5rem .875rem;font-size:.85rem;font-weight:700}
+.quiz-prog{flex:1;height:8px;background:#ddd;border-radius:4px;overflow:hidden}
+.quiz-prog-fill{height:100%;border-radius:4px;transition:width .4s}
+.quiz-badge{display:inline-block;font-size:.75rem;font-weight:800;padding:4px 12px;border-radius:20px;margin-bottom:.625rem;border:2px solid transparent}
+.quiz-title{font-size:1.3rem;font-weight:900;color:#111;margin-bottom:.25rem;line-height:1.25}
+.quiz-desc{font-size:.875rem;color:#666;margin-bottom:1.25rem;line-height:1.5;font-weight:600}
+.qblock{background:#fff;border:2px solid #e5e5e5;border-radius:var(--radius);padding:1rem;margin-bottom:.875rem;box-shadow:0 1px 6px rgba(0,0,0,.05)}
+.qtext{font-size:.95rem;font-weight:800;color:#111;margin-bottom:.75rem;line-height:1.4}
+.qopts{display:flex;flex-direction:column;gap:.5rem}
+.qopt{display:flex;align-items:center;gap:.75rem;padding:.875rem 1rem;border:2px solid #e5e5e5;border-radius:var(--radius-xs);background:#fff;text-align:left;font-size:.875rem;font-weight:700;color:#333;width:100%;transition:all .12s;-webkit-tap-highlight-color:transparent}
+.qopt:active{transform:scale(.98)}
+.qopt.s1{border-color:#3949AB;background:#E8EAF6;color:#1A237E}
+.qopt.s2{border-color:#00695C;background:#E0F2F1;color:#004D40}
+.qopt.s3{border-color:#E65100;background:#FFF3E0;color:#BF360C}
+.qradio{width:18px;height:18px;border-radius:50%;border:2px solid #ccc;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.qdot{width:9px;height:9px;border-radius:50%;display:none}
+.s1 .qdot{display:block;background:#3949AB}.s1 .qradio{border-color:#3949AB}
+.s2 .qdot{display:block;background:#00695C}.s2 .qradio{border-color:#00695C}
+.s3 .qdot{display:block;background:#E65100}.s3 .qradio{border-color:#E65100}
+.quiz-footer{display:flex;align-items:center;justify-content:space-between;margin-top:1.25rem;gap:.75rem}
+.quiz-warn{font-size:.875rem;color:var(--red);font-weight:800;display:none}
+.btn-submit{padding:.875rem 1.75rem;border-radius:50px;font-size:.95rem;font-weight:800;color:#fff;transition:transform .12s}
+.btn-submit:active{transform:scale(.96)}
+
+/* ── RESULT ── */
+.result-wrap{width:100%;max-width:560px;padding:1rem 1rem 3rem}
+.result-topbar{display:flex;gap:.625rem;margin-bottom:1rem}
+.result-hero{border-radius:var(--radius);padding:1.5rem 1.25rem;margin-bottom:1rem;text-align:center;color:#fff;position:relative;overflow:hidden;background:linear-gradient(135deg,#4A1D96,#6B21A8)}
+.hero-bg-icon{position:absolute;top:-15px;right:-15px;font-size:90px;opacity:.08;line-height:1}
+.hero-avatar{font-size:3.5rem;margin-bottom:.5rem}
+.hero-name{font-size:1.5rem;font-weight:900;margin-bottom:.5rem}
+.hero-pills{display:flex;justify-content:center;gap:.5rem;flex-wrap:wrap}
+.hero-pill{background:rgba(255,255,255,.18);padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:700}
+.rcard{background:#fff;border:2px solid #E9D5FF;border-radius:var(--radius);padding:1rem 1.125rem;margin-bottom:.875rem;box-shadow:0 1px 6px rgba(0,0,0,.04)}
+.rlbl{font-size:.7rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#888;margin-bottom:.625rem}
+.h-types{display:flex;gap:.625rem;margin-bottom:.875rem;flex-wrap:wrap}
+.h-type-dom{border-radius:10px;padding:.75rem 1rem;text-align:center;color:#fff;min-width:80px;flex:1}
+.h-type-sec{border-radius:10px;padding:.75rem .875rem;text-align:center;background:#f5f5f5;color:#333;min-width:70px}
+.h-type-ter{border-radius:10px;padding:.625rem .75rem;text-align:center;background:#fafafa;color:#aaa;min-width:60px}
+.h-type-icon{font-size:1.5rem;margin-bottom:3px}
+.h-type-name{font-size:.8rem;font-weight:900}
+.h-type-label{font-size:.65rem;font-weight:600;opacity:.7}
+.h-desc{font-size:.875rem;color:#333;line-height:1.6;font-weight:600;border-left:4px solid;padding-left:.75rem;margin-bottom:.875rem}
+.brow{display:flex;align-items:center;gap:.625rem;margin-bottom:6px}
+.blbl{font-size:.75rem;color:#555;width:100px;flex-shrink:0;font-weight:700;display:flex;align-items:center;gap:4px}
+.btrack{flex:1;height:8px;background:#eee;border-radius:4px;overflow:hidden}
+.bfill{height:100%;border-radius:4px;transition:width .6s}
+.bpct{font-size:.7rem;color:#888;width:26px;text-align:right;flex-shrink:0;font-weight:700}
+.famous-box{margin-top:.875rem;padding:.625rem .875rem;background:#f9f9f9;border-radius:.625rem;border:2px solid #eee;font-size:.8rem;font-weight:700;color:#555}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:.625rem;margin-bottom:.875rem}
+.two-col .rcard{margin-bottom:0}
+.val-icon{font-size:2rem;margin-bottom:.375rem}
+.val-title{font-size:.9rem;font-weight:900;color:#111;margin-bottom:.25rem}
+.val-desc{font-size:.75rem;color:#555;line-height:1.4;font-weight:600}
+.strength-item{display:flex;align-items:flex-start;gap:.5rem;margin-bottom:.5rem;font-size:.8rem;font-weight:700;color:#333;line-height:1.35}
+.careers-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.5rem;margin-top:.625rem}
+.career-pill{padding:.5rem .75rem;border-radius:20px;font-size:.8rem;text-align:center;font-weight:700;border:2px solid #ddd;background:#f9f9f9;color:#333}
+.top3{display:flex;flex-direction:column;gap:.5rem;margin-top:.875rem}
+.top3-item{display:flex;align-items:center;gap:.75rem;padding:.625rem .875rem;background:#f9f9f9;border-radius:10px;border:2px solid #eee}
+.top3-medal{font-size:1.25rem;flex-shrink:0}
+.top3-name{font-size:.9rem;font-weight:800;color:#111}
+.steps-list{display:flex;flex-direction:column;gap:.5rem}
+.step-item{display:flex;align-items:flex-start;gap:.625rem;font-size:.8rem;font-weight:600;color:#333;line-height:1.4}
+.dcoc-card{background:linear-gradient(135deg,#FAF5FF,#EDE9FE);border-color:#6B21A8;text-align:center}
+.dcoc-logo{width:90px;margin:0 auto .75rem}
+.dcoc-name{font-size:.9rem;font-weight:800;color:#4A1D96;margin-bottom:.25rem}
+.dcoc-tagline{font-size:.75rem;color:#7C3AED;margin-bottom:.875rem;font-weight:600}
+.fb-msg{font-size:1rem;font-weight:800;color:var(--fb);margin-bottom:.75rem}
+.btn-fb{background:var(--fb);color:#fff;border-radius:50px;padding:.875rem 1.25rem;font-size:.95rem;font-weight:800;width:100%;display:flex;align-items:center;justify-content:center;gap:.625rem;text-decoration:none;transition:transform .12s}
+.btn-fb:active{transform:scale(.97)}
+.btn-pdf{background:#1565C0;color:#fff;border-radius:50px;padding:.875rem 1.25rem;font-size:.95rem;font-weight:800;width:100%;display:flex;align-items:center;justify-content:center;gap:.625rem;transition:transform .12s;margin-top:.625rem}
+.btn-pdf:active{transform:scale(.97)}
+.btn-send{background:#2E7D32;color:#fff;border-radius:50px;padding:.875rem 1.25rem;font-size:.95rem;font-weight:800;width:100%;display:flex;align-items:center;justify-content:center;gap:.625rem;transition:transform .12s;margin-top:.625rem;border:none;cursor:pointer}
+.btn-send:active{transform:scale(.97)}
+.btn-send:disabled{background:#aaa;cursor:default;transform:none}
+.send-notice{font-size:.78rem;color:#555;line-height:1.5;font-weight:600;background:#F1F8E9;border:2px solid #A5D6A7;border-radius:var(--radius-xs);padding:.75rem 1rem;margin-top:.875rem;text-align:center}
+.send-success{background:#E8F5E9;border:2px solid #43A047;border-radius:var(--radius-xs);padding:.875rem 1rem;text-align:center;font-size:.9rem;font-weight:800;color:#2E7D32;margin-top:.625rem;display:none}
+.send-error{background:#FFEBEE;border:2px solid #E53935;border-radius:var(--radius-xs);padding:.875rem 1rem;text-align:center;font-size:.9rem;font-weight:800;color:#C62828;margin-top:.625rem;display:none}
+.btn-back-game{background:#fff;color:var(--purple);border:2px solid #D8B4FE;border-radius:50px;padding:.75rem 1.25rem;font-size:.875rem;font-weight:700;width:100%;transition:transform .12s;margin-top:.625rem}
+.btn-back-game:active{transform:scale(.97)}
+
+/* ── MODALS ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:500;align-items:flex-end;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal-sheet{background:#fff;border-radius:24px 24px 0 0;padding:1.5rem 1.25rem 2.5rem;width:100%;max-width:480px;max-height:88vh;overflow-y:auto;animation:slideUp .3s ease}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-handle{width:40px;height:4px;background:#ddd;border-radius:2px;margin:0 auto 1.25rem}
+.modal-icon{font-size:3rem;text-align:center;margin-bottom:.625rem}
+.modal-stop-badge{display:inline-block;background:#FFEBEE;color:#B71C1C;font-size:.75rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:.875rem;border:2px solid #E53935}
+.modal-title{font-size:1.3rem;font-weight:900;color:#111;margin-bottom:.375rem;line-height:1.2}
+.modal-who{font-size:1.1rem;margin-bottom:.5rem}
+.modal-rule{font-size:.8rem;color:#555;line-height:1.6;margin-bottom:1.25rem;padding:.875rem;background:#f9f9f9;border-radius:10px;border:2px solid #eee;font-weight:600}
+.modal-btn{border-radius:50px;padding:1rem 1.25rem;font-size:1rem;font-weight:800;width:100%;margin-bottom:.625rem;transition:transform .12s;color:#fff}
+.modal-btn:active{transform:scale(.97)}
+.modal-note{font-size:.75rem;color:#aaa;text-align:center;font-weight:600}
+
+/* WINNER modal */
+.win-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:600;align-items:center;justify-content:center;padding:1.25rem}
+.win-overlay.open{display:flex}
+.win-box{background:#fff;border-radius:var(--radius);padding:1.75rem 1.25rem;width:100%;max-width:380px;text-align:center;border:4px solid var(--gold);box-shadow:var(--shadow-lg)}
+.win-icon{font-size:4rem;margin-bottom:.5rem}
+.win-title{font-size:1.35rem;font-weight:900;color:#111;margin-bottom:.375rem}
+.win-sub{font-size:.85rem;color:#666;margin-bottom:1.25rem;line-height:1.5;font-weight:600}
+.win-btn{border-radius:50px;padding:.875rem;font-size:.95rem;font-weight:800;width:100%;margin-bottom:.5rem;transition:transform .12s;color:#fff}
+.win-btn:active{transform:scale(.97)}
+
+/* SURPRISE modal */
+.sq-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:700;align-items:flex-end;justify-content:center}
+.sq-overlay.open{display:flex}
+.sq-sheet{background:#fff;border-radius:24px 24px 0 0;padding:1.5rem 1.25rem 2.5rem;width:100%;max-width:480px;text-align:center;animation:slideUp .3s ease;border-top:5px solid #E91E63}
+.sq-emoji{font-size:3.5rem;display:block;margin-bottom:.5rem;animation:bounce .8s infinite alternate}
+@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-6px)}}
+.sq-badge{display:inline-block;font-size:.7rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:.875rem;border:2px solid}
+.sq-q{font-size:1.1rem;font-weight:900;color:#111;margin-bottom:.375rem;line-height:1.3}
+.sq-hint{font-size:.8rem;color:#888;font-weight:600;margin-bottom:1rem}
+.sq-opts{display:flex;flex-direction:column;gap:.5rem}
+.sq-opt{padding:.875rem 1rem;border:2.5px solid #E91E63;border-radius:var(--radius-xs);background:#fff;text-align:left;font-size:.9rem;font-weight:700;color:#333;width:100%;transition:all .12s}
+.sq-opt:active{transform:scale(.98)}
+
+/* PRINT */
+@media print{
+  .no-print{display:none!important}
+  /* removed duplicate */
+  #s-result{display:flex!important}
+  .result-wrap{max-width:100%;padding:0}
+  .game-topbar,.game-tabs{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ── LANDING ── -->
+<div id="s-landing" class="screen active">
+  <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAyADIAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAIWAhYDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD3+iiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKMg5wenWqOs6ta6Fo93ql4223toy7Y6n0A9ycAe5rxL4dfEi6k8eXa6vN/o+tTDAJ+WGXogHtjCfguelawpSnFyXQ2p0JVIuS6HvdFFFZGIUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFA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ooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD/9k=" class="land-logo" alt="DCOC">
+  <h1 class="land-title">🎲 Scara Carierei</h1>
+  <p class="land-sub">Board Game interactiv · 3 Quiz-uri obligatorii · Raport personalizat de carieră</p>
+  <div class="land-cards">
+    <div class="land-card"><div class="land-card-icon">👥</div><div><div class="land-card-title">Jucați împreună</div><div class="land-card-desc">Vedeți pozițiile tuturor pe tablă. Rapoartele sunt private — doar tu ți-l vezi pe al tău.</div></div></div>
+    <div class="land-card"><div class="land-card-icon">🛑</div><div><div class="land-card-title">Stop obligatoriu</div><div class="land-card-desc">La căsuțele 12, 24 și 36 toată lumea se oprește și completează quiz-ul!</div></div></div>
+    <div class="land-card"><div class="land-card-icon">📊</div><div><div class="land-card-title">Raport privat</div><div class="land-card-desc">La final primești un raport personalizat pe care îl poți salva ca PDF.</div></div></div>
+  </div>
+  <button class="btn-main" id="btnLandStart">Alătură-te jocului →</button>
+</div>
+
+<!-- ── JOIN ── -->
+<div id="s-join" class="screen">
+  <div style="width:100%;max-width:420px;padding:1.5rem 1.25rem 2rem">
+    <button style="background:none;border:none;font-size:1.5rem;color:#888;margin-bottom:.875rem" id="btnJoinBack">←</button>
+    <div class="join-header">
+      <div class="join-title">Bun venit! 👋</div>
+      <div class="join-sub">Alege avatarul tău și introdu numele pentru a intra în joc</div>
+    </div>
+    <div class="join-form">
+      <div>
+        <div class="section-label">Alege avatarul tău</div>
+        <div class="avatar-grid" id="avatarGrid"></div>
+      </div>
+      <div>
+        <div class="section-label">Numele tău</div>
+        <input class="join-input" id="joinName" placeholder="Ex: Maria, Ion, Alex..." maxlength="20">
+      </div>
+      <button class="btn-purple" id="btnJoinConfirm">Intru în joc 🎲</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── GAME ── -->
+<div id="s-game" class="screen">
+  <div class="game-topbar">
+    <div class="topbar-logo"><img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAyADIAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAIWAhYDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD3+iiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKMg5wenWqOs6ta6Fo93ql4223toy7Y6n0A9ycAe5rxL4dfEi6k8eXa6vN/o+tTDAJ+WGXogHtjCfguelawpSnFyXQ2p0JVIuS6HvdFFFZGIUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFA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ooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD/9k=" alt="DCOC"></div>
+    <div style="flex:1;min-width:0">
+      <div class="topbar-title">🪜 Scara Carierei</div>
+      <div class="topbar-sub">Stop OBLIGATORIU la căsuțele 12, 24, 36</div>
+    </div>
+    <button class="topbar-btn no-print" id="btnAddPlayerGame">+ Jucător</button>
+  </div>
+
+  <div class="game-tabs no-print">
+    <button class="tab-btn active" data-tab="tab-board">🗺️ Tablă</button>
+    <button class="tab-btn" data-tab="tab-players">👥 Jucători</button>
+    <button class="tab-btn" data-tab="tab-log">📋 Jurnal</button>
+  </div>
+
+  <!-- TAB: BOARD -->
+  <div class="tab-content active" id="tab-board">
+    <div class="dice-panel">
+      <div class="turn-row">
+        <div class="turn-avatar" id="tAvatar">😊</div>
+        <div>
+          <div class="turn-name" id="tName">—</div>
+          <div class="turn-pos" id="tPos">căsuța 0</div>
+        </div>
+      </div>
+      <div class="dice-row">
+        <div class="die" id="die1">—</div>
+        <div class="die" id="die2">—</div>
+      </div>
+      <div class="total-lbl" id="totalLbl"></div>
+      <button class="btn-roll" id="rollBtn" disabled>🎲 Aruncă zarurile</button>
+    </div>
+
+    <div class="board-label">🏆 FINISH — Nivelul Expertului (căsuța 47)</div>
+    <div class="board-grid" id="board"></div>
+    <div class="leg-wrap">
+      <span class="leg" style="background:#FFF9C4;color:#E65100;border-color:#F9A825">🚀 Start</span>
+      <span class="leg" style="background:#C8E6C9;color:#1B5E20;border-color:#2E7D32">🏆 Finish</span>
+      <span class="leg" style="background:#F1F8E9;color:#33691E;border-color:#558B2F">⬆ Avansezi</span>
+      <span class="leg" style="background:#FFEBEE;color:#B71C1C;border-color:#C62828">⬇ Înapoi</span>
+      <span class="leg" style="background:#F3E5F5;color:#4A148C;border-color:#6A1B9A">⏸ Sari tur</span>
+      <span class="leg" style="background:#E8EAF6;color:#1A237E;border-color:#3949AB">📝 Quiz 1·12</span>
+      <span class="leg" style="background:#E0F2F1;color:#004D40;border-color:#00695C">📝 Quiz 2·24</span>
+      <span class="leg" style="background:#FFF3E0;color:#BF360C;border-color:#E65100">📝 Quiz 3·36</span>
+    </div>
+  </div>
+
+  <!-- TAB: PLAYERS -->
+  <div class="tab-content" id="tab-players">
+    <div class="admin-strip" id="adminStrip">📊 Admin: <span id="adminCount">0</span> rapoarte generate</div>
+    <div class="add-player-card">
+      <div class="section-label">Adaugă jucător nou (oricând)</div>
+      <div class="add-inline">
+        <input id="quickName" placeholder="Nume jucător..." maxlength="20">
+        <button id="btnQuickAdd">+ Adaugă</button>
+      </div>
+    </div>
+    <div class="players-section">
+      <div class="players-header">
+        <span class="players-header-title">Jucători în joc</span>
+        <span class="players-header-count" id="playerCount">0</span>
+      </div>
+      <div id="playersList"></div>
+    </div>
+    <div class="cp-cards">
+      <div class="cp-card c1"><div class="cp-icon">📝</div><div class="cp-info"><div class="cp-name">Quiz 1 — Interese</div><div class="cp-sub">Căsuța 12 · Testul Holland</div></div></div>
+      <div class="cp-card c2"><div class="cp-icon">📝</div><div class="cp-info"><div class="cp-name">Quiz 2 — Valori</div><div class="cp-sub">Căsuța 24 · Valori profesionale</div></div></div>
+      <div class="cp-card c3"><div class="cp-icon">📝</div><div class="cp-info"><div class="cp-name">Quiz 3 — Stil de lucru</div><div class="cp-sub">Căsuța 36 · Profil complet</div></div></div>
+    </div>
+    <button class="btn-outline" id="btnReset" style="margin-top:.25rem">↺ Resetează jocul</button>
+  </div>
+
+  <!-- TAB: LOG -->
+  <div class="tab-content" id="tab-log">
+    <div class="log-card">
+      <div class="log-header">📋 Jurnal joc</div>
+      <div class="log-entries" id="glog"><div class="log-e">Adaugă jucători și începe jocul!</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── QUIZ ── -->
+<div id="s-quiz" class="screen">
+  <div class="quiz-wrap">
+    <div class="quiz-topbar no-print">
+      <button class="quiz-back" id="quizBackBtn">← Înapoi</button>
+      <div class="quiz-prog"><div class="quiz-prog-fill" id="qProg" style="width:0%"></div></div>
+    </div>
+    <span class="quiz-badge" id="qBadge"></span>
+    <h2 class="quiz-title" id="qTitle"></h2>
+    <p class="quiz-desc" id="qDesc"></p>
+    <div id="qQuestions"></div>
+    <div class="quiz-footer">
+      <span class="quiz-warn" id="qWarn">⚠ Răspunde la toate!</span>
+      <button class="btn-submit" id="qSubBtn">Salvează ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── RESULT ── -->
+<div id="s-result" class="screen">
+  <div class="result-wrap">
+    <div class="result-topbar no-print">
+      <button class="quiz-back" id="resultBackBtn">← Joc</button>
+    </div>
+    <div id="resultContent"></div>
+  </div>
+</div>
+
+<!-- CHECKPOINT MODAL -->
+<div class="modal-overlay" id="cpOverlay">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div style="text-align:center">
+      <div class="modal-icon" id="cpIcon">📝</div>
+      <div class="modal-stop-badge">🛑 STOP OBLIGATORIU</div>
+      <h2 class="modal-title" id="cpTitle">Checkpoint Quiz</h2>
+      <div class="modal-who" id="cpWho"></div>
+      <div class="modal-rule">📋 <b>Regulă obligatorie:</b> Completează quiz-ul înainte de a continua! <b>Jocul nu poate continua fără a completa Quiz-ul.</b></div>
+      <button class="modal-btn" id="cpStartBtn" style="background:#3949AB">✏️ Completează Quiz-ul acum</button>
+      <p class="modal-note">🔒 Jocul continuă doar după completarea quiz-ului</p>
+    </div>
+  </div>
+</div>
+
+<!-- WINNER MODAL -->
+<div class="win-overlay" id="winOverlay">
+  <div class="win-box">
+    <div class="win-icon">🏆</div>
+    <div class="win-title" id="winTitle">A terminat!</div>
+    <div class="win-sub" id="winSub"></div>
+    <button class="win-btn" style="background:#6B21A8" id="winReportBtn">📊 Vezi raportul meu</button>
+    <button class="win-btn" style="background:#558B2F;display:none" id="winContinueBtn">▶ Continuă jocul</button>
+    <button class="win-btn" style="background:#555" id="winNewBtn">↺ Joc nou</button>
+  </div>
+</div>
+
+<!-- SURPRISE MODAL -->
+<div class="sq-overlay" id="sqOverlay">
+  <div class="sq-sheet">
+    <span class="sq-emoji" id="sqEmoji">🎯</span>
+    <span class="sq-badge" id="sqBadge">✨ ÎNTREBARE SURPRIZĂ</span>
+    <h2 class="sq-q" id="sqQ"></h2>
+    <p class="sq-hint">Toată echipa răspunde! 🎉</p>
+    <div class="sq-opts" id="sqOpts"></div>
+  </div>
+</div>
+
+<!-- JOIN MODAL (mid-game) -->
+<div class="modal-overlay" id="joinMidOverlay">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <h2 style="font-size:1.2rem;font-weight:900;color:#111;margin-bottom:1rem;text-align:center">+ Adaugă jucător nou</h2>
+    <div class="section-label">Alege avatarul</div>
+    <div class="avatar-grid" id="midAvatarGrid" style="margin-bottom:1rem"></div>
+    <div class="section-label">Numele</div>
+    <input class="join-input" id="midName" placeholder="Nume jucător..." maxlength="20" style="margin-bottom:1rem">
+    <button class="btn-purple" id="btnMidConfirm">Intru în joc 🎲</button>
+    <button class="btn-outline" id="btnMidCancel" style="margin-top:.5rem">Anulează</button>
+  </div>
+</div>
+
+PART3EOF
+
+echo "HTML structure done"
+<script>
+/* ============================================================
+   DATA
+============================================================ */
+var TOTAL=48;
+var QR_CELLS=[12,24,36];
+var EVENTS={
+  4:{t:'boost',l:'Inspirație +3',m:3},8:{t:'back',l:'Îndoieli -2',m:-2},10:{t:'rest',l:'Reflecție'},
+  16:{t:'boost',l:'Mentor +2',m:2},20:{t:'back',l:'Burnout -3',m:-3},22:{t:'rest',l:'Training'},
+  28:{t:'boost',l:'Networking +3',m:3},32:{t:'back',l:'Criză -2',m:-2},34:{t:'rest',l:'Vacanță'},
+  40:{t:'boost',l:'Promovare +3',m:3},44:{t:'back',l:'Restructurare',m:-3},46:{t:'rest',l:'Evaluare'}
+};
+var FLOOR={0:'🚀 START',8:'👶 Junior',16:'⭐ Specialist',24:'🌟 Senior',32:'🔥 Lead',40:'💼 Manager',47:'👑 Expert'};
+var AVATARS=['😊','🤩','😎','🥳','🤓','😄','🦸','🧠','💪','🌟','🎯','🚀'];
+var PCOLORS=['#E53935','#1E88E5','#43A047','#8E24AA','#FB8C00','#00ACC1','#6D4C41','#3949AB','#00897B','#F4511E','#6B21A8','#0097A7'];
+var CP_INFO=[
+  {title:'Checkpoint 1 — Quiz Interese',color:'#3949AB',bg:'#E8EAF6',icon:'🧠',idx:0},
+  {title:'Checkpoint 2 — Quiz Valori',color:'#00695C',bg:'#E0F2F1',icon:'💎',idx:1},
+  {title:'Checkpoint 3 — Quiz Stil de lucru',color:'#E65100',bg:'#FFF3E0',icon:'⚡',idx:2}
+];
+var QUIZZES=[
+  {id:'q1',title:'Interesele tale profesionale',desc:'Testul Holland identifică tipul tău de personalitate. Alege răspunsul care ți se potrivește cel mai bine.',
+   q:[
+    {t:'Îți place mai mult să...',o:[{l:'Lucrezi cu mâinile, să construiești sau să repari',s:{R:3}},{l:'Analizezi date sau rezolvi probleme complexe',s:{I:3}},{l:'Creezi artă, muzică sau exprimi idei originale',s:{A:3}},{l:'Ajuți, înveți sau consiliezi oameni',s:{S:3}},{l:'Conduci echipe sau convingi pe ceilalți',s:{E:3}},{l:'Organizezi documente, date sau procese',s:{C:3}}]},
+    {t:'Mediul de lucru ideal este...',o:[{l:'Afară, în natură sau într-un atelier',s:{R:3}},{l:'Un laborator sau birou de cercetare liniștit',s:{I:3}},{l:'Un studio creativ sau spațiu inspirațional',s:{A:3}},{l:'O școală, spital sau organizație comunitară',s:{S:3}},{l:'O companie dinamică unde poți avansa rapid',s:{E:3}},{l:'Un birou structurat cu procese clare',s:{C:3}}]},
+    {t:'Ce te motivează cel mai mult?',o:[{l:'Să văd rezultate concrete și tangibile',s:{R:3}},{l:'Să rezolv probleme complexe prin analiză',s:{I:3}},{l:'Să creez ceva unic și să mă exprim liber',s:{A:3}},{l:'Să fac diferența în viața oamenilor',s:{S:3}},{l:'Să îmi depășesc limitele și să cresc',s:{E:3}},{l:'Să am un sistem clar și să fiu eficient',s:{C:3}}]},
+    {t:'Cum îți petreci cel mai mult timp liber?',o:[{l:'Sport, DIY, grădinărit sau activități fizice',s:{R:3}},{l:'Citești, înveți sau joci jocuri strategice',s:{I:3}},{l:'Scrii, desenezi, fotografiezi sau faci muzică',s:{A:3}},{l:'Ești voluntar sau participi la grupuri sociale',s:{S:3}},{l:'Conduci proiecte sau organizezi evenimente',s:{E:3}},{l:'Planifici, faci liste sau gestionezi finanțe',s:{C:3}}]},
+    {t:'La un curs, preferi...',o:[{l:'Cursuri practice, cu aplicații reale',s:{R:3}},{l:'Cursuri teoretice, cu multă cercetare',s:{I:3}},{l:'Cursuri creative sau de expresie personală',s:{A:3}},{l:'Cursuri despre comunicare sau psihologie',s:{S:3}},{l:'Cursuri de leadership sau antreprenoriat',s:{E:3}},{l:'Cursuri de organizare sau contabilitate',s:{C:3}}]},
+    {t:'Cum reacționezi la un proiect nou?',o:[{l:'Vreau să știu exact ce am de construit',s:{R:3}},{l:'Cercetez mai întâi toate datele disponibile',s:{I:3}},{l:'Mă gândesc cum pot face ceva creativ',s:{A:3}},{l:'Întreb echipa cum îi pot ajuta cel mai bine',s:{S:3}},{l:'Preiau inițiativa și coordonez tot',s:{E:3}},{l:'Fac un plan detaliat înainte de orice',s:{C:3}}]},
+    {t:'Ce recunoaștere apreciezi cel mai mult?',o:[{l:'Lăudat pentru calitatea muncii practice',s:{R:3}},{l:'Recunoscut pentru expertiza mea tehnică',s:{I:3}},{l:'Apreciat pentru originalitatea ideilor',s:{A:3}},{l:'Mulțumit că am ajutat pe cineva',s:{S:3}},{l:'Promovat cu mai multă responsabilitate',s:{E:3}},{l:'Văzut ca cel mai organizat din echipă',s:{C:3}}]}
+  ]},
+  {id:'q2',title:'Valorile tale profesionale',desc:'Ce contează cu adevărat pentru tine la locul de muncă?',
+   q:[
+    {t:'Ce e cel mai important la un job?',o:[{l:'Salariul mare și beneficiile financiare',s:{F:3}},{l:'Stabilitate și siguranța locului de muncă',s:{St:3}},{l:'Echilibrul viață profesională / personală',s:{Ec:3}},{l:'Impact social și sens în ceea ce faci',s:{Im:3}},{l:'Recunoaștere, prestigiu și statut social',s:{Pr:3}},{l:'Autonomie și libertatea de a lua decizii',s:{Au:3}}]},
+    {t:'Cum preferi să lucrezi?',o:[{l:'Independent, cu puțin control extern',s:{Au:3}},{l:'În echipă strânsă și colaborativ',s:{Im:2,Ec:1}},{l:'Cu un program fix și reguli clare',s:{St:3}},{l:'Flexibil, de oriunde și oricând',s:{Ec:3}},{l:'Cu responsabilitate mare și vizibilitate',s:{Pr:3}},{l:'Într-un domeniu bine plătit',s:{F:3}}]},
+    {t:'Ce ți-ar face munca mai satisfăcătoare?',o:[{l:'Să câștig semnificativ mai mult',s:{F:3}},{l:'Să știu că jobul meu e sigur pe termen lung',s:{St:3}},{l:'Să am mai mult timp pentru familie',s:{Ec:3}},{l:'Să văd că munca mea ajută comunitatea',s:{Im:3}},{l:'Să fiu respectat și recunoscut în domeniu',s:{Pr:3}},{l:'Să iau singur deciziile importante',s:{Au:3}}]},
+    {t:'La schimbări mari la muncă, tu...',o:[{l:'Accept dacă vine cu o mărire de salariu',s:{F:2}},{l:'Prefer stabilitate, schimbările mă stresează',s:{St:3}},{l:'Accept dacă nu îmi afectează viața personală',s:{Ec:2}},{l:'Sunt deschis dacă are sens pentru misiune',s:{Im:2}},{l:'Profit să îmi cresc rolul și vizibilitatea',s:{Pr:2}},{l:'Le gestionez singur, fără indicații',s:{Au:2}}]},
+    {t:'Dacă ai alege între două joburi, alegi pe cel care...',o:[{l:'Plătește cu 30% mai mult',s:{F:3}},{l:'Are contract pe termen nedeterminat',s:{St:3}},{l:'Îți permite remote și program flexibil',s:{Ec:3}},{l:'Are o misiune socială puternică',s:{Im:3}},{l:'Îți oferă un titlu mai mare și vizibilitate',s:{Pr:3}},{l:'Îți lasă libertatea să decizi cum lucrezi',s:{Au:3}}]},
+    {t:'Ce te frustrează cel mai mult la muncă?',o:[{l:'Salariul mic față de efortul depus',s:{F:3}},{l:'Incertitudinea și lipsa de stabilitate',s:{St:3}},{l:'Orele care îți invadează viața personală',s:{Ec:3}},{l:'Să lucrezi la ceva fără sens sau impact',s:{Im:3}},{l:'Să nu fii recunoscut pentru munca ta',s:{Pr:3}},{l:'Să fii controlat constant, fără putere de decizie',s:{Au:3}}]},
+    {t:'Cum îți imaginezi cariera ideală peste 10 ani?',o:[{l:'Financiar independent sau cu venituri mari',s:{F:3}},{l:'Cu un job stabil, pensie asigurată',s:{St:3}},{l:'Cu timp pentru familie, călătorii și pasiuni',s:{Ec:3}},{l:'Că ai contribuit la schimbări pozitive',s:{Im:3}},{l:'Recunoscut ca expert sau lider în domeniu',s:{Pr:3}},{l:'Că ești propriul tău șef',s:{Au:3}}]}
+  ]},
+  {id:'q3',title:'Stilul tău de lucru',desc:'Cum gândești și lucrezi cel mai bine?',
+   q:[
+    {t:'La o problemă complexă, prima ta reacție este...',o:[{l:'Fac o listă cu pașii și urmez un plan clar',s:{Si:3}},{l:'Cer opinii de la echipă înainte de a decide',s:{Co:3}},{l:'Mă arunc direct și văd ce funcționează',s:{Pr:3}},{l:'Cercetez în detaliu toate opțiunile posibile',s:{An:3}},{l:'Găsesc o soluție creativă, neconvențională',s:{Cr:3}},{l:'Deleg sarcinile și coordonez echipa',s:{Li:3}}]},
+    {t:'Cum iei decizii importante?',o:[{l:'Urmez proceduri și reguli stabilite',s:{Si:3}},{l:'Mă consult cu colegii și decid în consens',s:{Co:3}},{l:'Pe baza experienței și instinctului',s:{Pr:3}},{l:'Analizez date și fapte înainte de orice',s:{An:3}},{l:'Găsesc abordări inovatoare și testez rapid',s:{Cr:3}},{l:'Decid eu și îmi asum responsabilitatea',s:{Li:3}}]},
+    {t:'La feedback critic, tu...',o:[{l:'Revăd procesele și le îmbunătățesc pas cu pas',s:{Si:2,An:1}},{l:'Discut cu echipa cum putem face mai bine',s:{Co:3}},{l:'Mă concentrez pe ce pot schimba concret',s:{Pr:3}},{l:'Analizez unde am greșit înainte de a acționa',s:{An:3}},{l:'Văd feedback-ul ca pe o oportunitate creativă',s:{Cr:2}},{l:'Ajustez strategia echipei și comunic direcția',s:{Li:3}}]},
+    {t:'Colegii te văd ca...',o:[{l:'Organizat, metodic și de încredere',s:{Si:3}},{l:'Un jucător de echipă, empatic și deschis',s:{Co:3}},{l:'Rezultat-orientat, rapid și eficient',s:{Pr:3}},{l:'Analitic, precis și atent la detalii',s:{An:3}},{l:'Creativ, plin de idei și neconvențional',s:{Cr:3}},{l:'Un lider natural, vizionar și hotărât',s:{Li:3}}]},
+    {t:'Cu termen limită strâns, tu...',o:[{l:'Urmez planul stabilit și bifez fiecare pas',s:{Si:3}},{l:'Împart sarcinile cu echipa și colaborăm',s:{Co:3}},{l:'Mă concentrez strict pe ce e urgent și livrez',s:{Pr:3}},{l:'Revăd toate datele înainte să acționez',s:{An:2}},{l:'Găsesc o cale mai rapidă și mai ingenioasă',s:{Cr:3}},{l:'Preiau controlul și motivez echipa',s:{Li:3}}]},
+    {t:'Cum îți organizezi ziua de lucru?',o:[{l:'Am un program fix cu task-uri planificate',s:{Si:3}},{l:'Mă aliniez cu echipa și lucrez după priorități comune',s:{Co:3}},{l:'Mă ocup de ce e mai important acum, fără plan rigid',s:{Pr:3}},{l:'Analizez ce e de făcut și prioritizez după impact',s:{An:3}},{l:'Lucrez în rafale de creativitate',s:{Cr:3}},{l:'Setez direcția și mă asigur că echipa avansează',s:{Li:3}}]},
+    {t:'Când un plan nu funcționează, tu...',o:[{l:'Revin la pași inițiali și identific unde a eșuat',s:{Si:3}},{l:'Cer input de la echipă și reformulăm împreună',s:{Co:3}},{l:'Trec rapid la o altă abordare',s:{Pr:3}},{l:'Analizez cauzele profunde înainte de a schimba ceva',s:{An:3}},{l:'Văd eșecul ca pe o oportunitate de a inova',s:{Cr:3}},{l:'Îmi asum responsabilitatea și schimb strategia',s:{Li:3}}]}
+  ]}
+];
+var hD={R:{n:'Realist',d:'Practic și orientat spre concret. Îți place să lucrezi cu obiecte, mașini sau natura.'},I:{n:'Investigativ',d:'Analitic și curios. Preferi să rezolvi probleme complexe prin cercetare și logică.'},A:{n:'Artistic',d:'Creativ și expresiv. Preferi medii nestructurate unde poți crea și experimenta.'},S:{n:'Social',d:'Empatic și orientat spre oameni. Preferi să ajuți, să înveți sau să consiliezi.'},E:{n:'Antreprenorial',d:'Ambițios și persuasiv. Îți place să conduci, să vinzi și să influențezi decizii.'},C:{n:'Convențional',d:'Ordonat și metodic. Preferi structura clară și ești eficient în sarcini organizate.'}};
+var HCOL={R:'#E53935',I:'#3949AB',A:'#8E24AA',S:'#00897B',E:'#F57F17',C:'#546E7A'};
+var HEMOJI={R:'🔧',I:'🔬',A:'🎨',S:'🤝',E:'🚀',C:'📊'};
+var cM={R:['Inginer','Arhitect','Chirurg','Mecanic','Agronom','Pilot'],I:['Cercetător','Medic','Analist date','Farmacist','Economist','Biolog'],A:['Designer','Scriitor','Fotograf','Regizor','Art director','UX Designer'],S:['Profesor','Asistent social','Psiholog','Resurse umane','Consilier','Terapeut'],E:['Manager','Antreprenor','Avocat','PR Manager','Consultant','Broker'],C:['Contabil','Administrator','Analist financiar','Auditor','Logistician','Programator']};
+var STRENGTHS={R:['Rezolvi probleme practice','Ești de încredere','Dai rezultate concrete'],I:['Analizezi în profunzime','Găsești soluții complexe','Ești curios și autodidact'],A:['Gândești out-of-the-box','Inspiri oamenii din jur','Transformi ideile în realitate'],S:['Comunici cu empatie','Construiești relații solide','Motivezi echipele'],E:['Convingi și negociezi','Preiei inițiativa','Duci proiectele la bun sfârșit'],C:['Ești precis și organizat','Gestionezi detalii complexe','Creezi sisteme eficiente']};
+var GROWTH={R:['Lucrează la comunicarea verbală','Exersează gândirea strategică','Deschide-te spre schimbare'],I:['Echilibrează analiza cu acțiunea','Simplifică mesajele pentru ceilalți','Construiește relații profesionale'],A:['Înveți să lucrezi cu deadline-uri','Structurează-ți mai bine ideile','Combină creativitatea cu pragmatismul'],S:['Exersează asertivitatea','Pune-ți și propriile nevoi pe primul loc','Ia decizii mai rapid'],E:['Lucrează răbdarea și atenția la detalii','Ascultă mai mult, vorbește mai puțin','Finalizează ce începi'],C:['Flexibilizează-te în fața schimbării','Gândește și la imaginea de ansamblu','Riscă calculat mai des']};
+var FAMOUS={R:'Elon Musk',I:'Marie Curie',A:'Steve Jobs',S:'Nelson Mandela',E:'Richard Branson',C:'Warren Buffett'};
+var vN={F:'Financiar',St:'Stabilitate',Ec:'Echilibru',Im:'Impact',Pr:'Prestigiu',Au:'Autonomie'};
+var VEMOJI={Financiar:'💰',Stabilitate:'🏛️',Echilibru:'⚖️',Impact:'🌍',Prestigiu:'🏆',Autonomie:'🦅'};
+var vI={Financiar:{l:'Orientare financiară',d:'Ești motivat de remunerație. Caută joburi în finanțe, vânzări sau consultanță.'},Stabilitate:{l:'Orientare spre stabilitate',d:'Preferi siguranța. Sectoarele public, educație și sănătate ți se potrivesc.'},Echilibru:{l:'Echilibru viață-muncă',d:'Prioritizezi sănătatea mentală. Caută joburi cu flexibilitate și remote work.'},Impact:{l:'Impact social',d:'Vrei să faci o diferență. ONG-urile și companiile cu misiune socială sunt pentru tine.'},Prestigiu:{l:'Recunoaștere și statut',d:'Ești motivat de vizibilitate. Mediul corporativ și leadershipul te atrag.'},Autonomie:{l:'Autonomie și libertate',d:'Îți place să fii propriul tău șef. Freelancing-ul și antreprenoriatul ți se potrivesc.'}};
+var sN={Si:'Sistematic',Co:'Colaborativ',Pr:'Pragmatic',An:'Analitic',Cr:'Creativ',Li:'Lider'};
+var SEMOJI={Sistematic:'📋',Colaborativ:'🤝',Pragmatic:'⚡',Analitic:'🔍',Creativ:'💡',Lider:'🎯'};
+var sI={Sistematic:{l:'Gânditor sistematic',d:'Exceli în medii structurate: project management, operațiuni, contabilitate.'},Colaborativ:{l:'Spirit colaborativ',d:'Lucrezi cel mai bine în echipă. HR, coordonare sau customer success sunt perfecte.'},Pragmatic:{l:'Orientat spre acțiune',d:'Preferi rezultatele concrete. Vânzările și operațiunile ți se potrivesc.'},Analitic:{l:'Gânditor analitic',d:'Exceli în analiza datelor. Data science, finanțele și consultanța sunt forte.'},Creativ:{l:'Gânditor creativ',d:'Aduci idei noi. Marketing, design, produs și strategie sunt domeniile tale.'},Lider:{l:'Spirit de lider',d:'Conduci natural oameni. Management și consultanță executivă sunt căile tale.'}};
+var SQ=[
+  {e:'😄',c:'#E91E63',bg:'#FCE4EC',q:'Cum te simți astăzi?',o:['🔥 Super energic!','😊 Bine, mulțumesc!','😐 Merge și-așa...','😴 Somnoros, dar prezent!','🤩 Cel mai bun day ever!']},
+  {e:'👥',c:'#3949AB',bg:'#E8EAF6',q:'Cu cine ai venit la Festival?',o:['👨‍👩‍👧 Cu familia','🤝 Cu prietenii','🧑‍🏫 Cu școala / clasa','💼 Cu colegii','🦸 Singur/ă!']},
+  {e:'🎓',c:'#00695C',bg:'#E0F2F1',q:'Ce facultate te interesează?',o:['💻 Informatică / IT','🏥 Medicină / Farmacie','⚖️ Drept / Științe sociale','🎨 Arte / Design','📊 Economie / Business']},
+  {e:'🚀',c:'#E65100',bg:'#FFF3E0',q:'Care e visul tău profesional?',o:['🏢 Propria companie','🌍 Schimb lumea prin tech','🎤 Cunoscut în domeniu','💡 Inventez ceva nou','❤️ Ajut oamenii direct']},
+  {e:'🌟',c:'#6A1B9A',bg:'#F3E5F5',q:'Ce materie îți place cel mai mult?',o:['🔢 Matematică / Fizică','📖 Litere / Română','🧬 Biologie / Chimie','🎨 Arte / Muzică / Sport','💻 Informatică / TIC']},
+  {e:'🤔',c:'#558B2F',bg:'#F1F8E9',q:'Cum înveți cel mai bine?',o:['📚 Citind și luând notițe','👂 Ascultând explicații','✋ Practicând direct','👫 Discutând cu alții','🎥 Din videouri / online']},
+  {e:'💭',c:'#1565C0',bg:'#E3F2FD',q:'Ce îți place să faci în timpul liber?',o:['🎮 Gaming / tech','🎨 Artă / muzică / dans','⚽ Sport / outdoor','📚 Citit / documentare','🍕 Socializat cu prietenii']},
+  {e:'🌍',c:'#00838F',bg:'#E0F7FA',q:'Unde ți-ar plăcea să lucrezi?',o:['🏡 De acasă (remote)','🏢 La birou, în echipă','✈️ Călătorind prin lume','🏥 Spital / laborator','🚀 Startup dinamic']},
+  {e:'💰',c:'#F57F17',bg:'#FFFDE7',q:'Ce e mai important la un job?',o:['💵 Salariul mare','❤️ Să îmi placă ce fac','⚖️ Echilibru muncă-viață','📈 Să avansez rapid','🤝 Colegii și atmosfera']},
+  {e:'🦸',c:'#C62828',bg:'#FFEBEE',q:'Dacă ai fi orice profesionist, ai fi...?',o:['👨‍💻 Developer / IT','🧑‍⚕️ Doctor / psiholog','🎬 Creator de conținut','🏛️ Politician / diplomat','🧑‍🚀 Astronaut / explorator']},
+  {e:'📱',c:'#1B5E20',bg:'#E8F5E9',q:'Ce tehnologie va schimba lumea?',o:['🤖 Inteligența artificială','🧬 Biotehnologia','☀️ Energia regenerabilă','🌐 Realitatea virtuală','🛸 Explorarea spațiului']},
+  {e:'🎯',c:'#4527A0',bg:'#EDE7F6',q:'Care e superputerea ta?',o:['🧠 Gândesc strategic','❤️ Empatizez cu toată lumea','⚡ Acționez rapid','🎨 Sunt creativ/ă','📋 Sunt super organizat/ă']}
+];
+var sqUsed=[],sqPending=null;
+
+/* ============================================================
+   STATE
+============================================================ */
+var players=[],curP=0,rolling=false,started=false;
+var qAns=[],activeQ=0,cpIdx=0;
+var totalRolls=0,finishedPlayers=[];
+var totalReports=0;
+var selectedAvatar=AVATARS[0];
+var midSelectedAvatar=AVATARS[0];
+
+/* ============================================================
+   UTILS
+============================================================ */
+function showScreen(id){
+  ['s-landing','s-join','s-game','s-quiz','s-result'].forEach(function(s){
+    document.getElementById(s).classList.remove('active');
+  });
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+function addLog(msg){
+  var log=document.getElementById('glog');
+  var e=document.createElement('div');e.className='log-e';e.innerHTML=msg;
+  log.insertBefore(e,log.firstChild);
+}
+
+/* ============================================================
+   AVATAR GRIDS
+============================================================ */
+function buildAvatarGrid(containerId,onSelect,currentSel){
+  var grid=document.getElementById(containerId);grid.innerHTML='';
+  AVATARS.forEach(function(av){
+    var btn=document.createElement('button');
+    btn.className='av-btn'+(av===currentSel?' selected':'');
+    btn.textContent=av;
+    btn.addEventListener('click',function(){
+      grid.querySelectorAll('.av-btn').forEach(function(b){b.classList.remove('selected');});
+      btn.classList.add('selected');
+      onSelect(av);
+    });
+    grid.appendChild(btn);
+  });
+}
+
+/* ============================================================
+   BOARD
+============================================================ */
+function ctype(n){
+  if(n===0)return 's';if(n===TOTAL-1)return 'f';
+  if(n===12)return 'q1';if(n===24)return 'q2';if(n===36)return 'q3';
+  if(FLOOR[n])return 'floor';
+  var ev=EVENTS[n];if(ev)return ev.t==='boost'?'boost':ev.t==='back'?'back':'rest';
+  return 'blank';
+}
+function cellEmoji(n){
+  if(n===0)return '🚀';if(n===TOTAL-1)return '🏆';
+  if(QR_CELLS.indexOf(n)>=0)return '📝';
+  if(FLOOR[n])return '🪜';
+  var ev=EVENTS[n];if(ev)return ev.t==='boost'?'⬆️':ev.t==='back'?'⬇️':'⏸️';
+  return '';
+}
+function buildBoard(){
+  var board=document.getElementById('board');board.innerHTML='';
+  var perRow=8,rows=[];
+  for(var r=0;r<Math.ceil(TOTAL/perRow);r++){
+    var row=[];
+    for(var c=0;c<perRow;c++){var idx=r%2===0?r*perRow+c:r*perRow+(perRow-1-c);row.push(idx<TOTAL?idx:-1);}
+    rows.push(row);
+  }
+  rows.reverse();
+  rows.forEach(function(row){
+    row.forEach(function(n){
+      var div=document.createElement('div');
+      if(n===-1){div.className='cell';div.style.opacity='0.1';board.appendChild(div);return;}
+      var t=ctype(n);div.className='cell c'+t;div.id='cell-'+n;
+      var label=FLOOR[n]||(n===12?'QUIZ 1':n===24?'QUIZ 2':n===36?'QUIZ 3':(EVENTS[n]?EVENTS[n].l:''));
+      div.innerHTML='<span class="cn">'+n+'</span><span class="ci">'+cellEmoji(n)+'</span><span class="cl">'+label+'</span><div class="ctoks" id="tok-'+n+'"></div>';
+      board.appendChild(div);
+    });
+  });
+}
+function renderToks(){
+  for(var i=0;i<TOTAL;i++){var el=document.getElementById('tok-'+i);if(el)el.innerHTML='';}
+  players.forEach(function(p){
+    var el=document.getElementById('tok-'+p.pos);
+    if(el){var t=document.createElement('div');t.className='tok-av';t.textContent=p.avatar;t.title=p.name;el.appendChild(t);}
+  });
+}
+
+/* ============================================================
+   PLAYERS LIST (visible to all — shows positions but NOT reports)
+============================================================ */
+function renderPlayers(){
+  var list=document.getElementById('playersList');
+  document.getElementById('playerCount').textContent=players.length;
+  list.innerHTML='';
+  players.forEach(function(p,i){
+    var row=document.createElement('div');
+    row.className='player-row'+(i===curP&&started?' active-p':'');
+    var pips='';
+    for(var qi=0;qi<3;qi++){
+      var cls='qpip'+(p.qr[qi]?' q'+(qi+1):(p.mustStop&&p.mustStop[qi]?' pending':''));
+      pips+='<div class="'+cls+'"></div>';
+    }
+    var finBadge=p.finished?'<span class="p-fin">🏁 Terminat</span>':'';
+    row.innerHTML='<div class="p-av">'+p.avatar+'</div>'
+      +'<div class="p-info"><div class="p-name">'+p.name+'</div>'
+      +'<div class="p-pos">Căsuța '+p.pos+(i===curP&&started?' · Rândul lui':'')+'</div></div>'
+      +'<div class="p-qr">'+pips+'</div>'+finBadge;
+    list.appendChild(row);
+  });
+  if(players.length>0&&started){
+    var p=players[curP];
+    document.getElementById('tAvatar').textContent=p.avatar;
+    document.getElementById('tName').textContent=p.name;
+    document.getElementById('tPos').textContent='căsuța '+p.pos;
+  }
+  document.getElementById('adminCount').textContent=totalReports;
+}
+
+/* ============================================================
+   ADD PLAYER
+============================================================ */
+function doAddPlayer(name,avatar){
+  if(!name.trim())return;
+  var idx=players.length;
+  players.push({name:name.trim(),avatar:avatar,color:PCOLORS[idx%PCOLORS.length],pos:0,skips:0,qr:[false,false,false],mustStop:[false,false,false],scores:{},finished:false});
+  if(!started)startGame();
+  renderToks();renderPlayers();
+  addLog('<b>'+name.trim()+'</b> '+avatar+' s-a alăturat jocului!');
+}
+function startGame(){started=true;curP=0;document.getElementById('rollBtn').disabled=false;renderPlayers();addLog('🎲 Jocul a început! Jucătorii pot intra oricând.');}
+function resetGame(){
+  players=[];curP=0;rolling=false;started=false;
+  totalRolls=0;sqUsed=[];sqPending=null;finishedPlayers=[];
+  document.getElementById('winOverlay').classList.remove('open');
+  document.getElementById('cpOverlay').classList.remove('open');
+  document.getElementById('sqOverlay').classList.remove('open');
+  document.getElementById('rollBtn').disabled=true;
+  document.getElementById('die1').textContent='—';document.getElementById('die2').textContent='—';
+  document.getElementById('totalLbl').textContent='';
+  document.getElementById('tName').textContent='—';document.getElementById('tAvatar').textContent='😊';
+  document.getElementById('glog').innerHTML='<div class="log-e">Adaugă jucători și începe jocul!</div>';
+  buildBoard();renderPlayers();
+}
+
+/* ============================================================
+   DICE & MOVEMENT
+============================================================ */
+var FACES=['⚀','⚁','⚂','⚃','⚄','⚅'];
+function getPendingCP(p){for(var i=0;i<3;i++){if(p.mustStop[i]&&!p.qr[i])return i;}return -1;}
+
+function rollDice(){
+  if(rolling||!players.length)return;
+  var p=players[curP];
+  var pend=getPendingCP(p);
+  if(pend>=0){addLog('🛑 <b>'+p.name+'</b> trebuie să completeze Checkpoint '+(pend+1)+'!');openCP(pend);return;}
+  if(p.skips>0){p.skips--;addLog('<b>'+p.name+'</b> sare un tur.');nextTurn();return;}
+  rolling=true;
+  document.getElementById('rollBtn').disabled=true;
+  document.getElementById('totalLbl').textContent='';
+  var d1=document.getElementById('die1'),d2=document.getElementById('die2');
+  d1.classList.add('rolling');d2.classList.add('rolling');
+  var ct=0;
+  var iv=setInterval(function(){
+    d1.textContent=FACES[Math.floor(Math.random()*6)];
+    d2.textContent=FACES[Math.floor(Math.random()*6)];ct++;
+    if(ct>10){
+      clearInterval(iv);d1.classList.remove('rolling');d2.classList.remove('rolling');
+      var v1=Math.ceil(Math.random()*6),v2=Math.ceil(Math.random()*6);
+      d1.textContent=FACES[v1-1];d2.textContent=FACES[v2-1];
+      document.getElementById('totalLbl').textContent='= '+(v1+v2);
+      setTimeout(function(){movePlayer(v1+v2);},200);
+    }
+  },55);
+}
+
+function movePlayer(steps){
+  var p=players[curP];
+  var oldPos=p.pos;
+  p.pos=Math.min(p.pos+steps,TOTAL-1);
+  for(var qi=0;qi<QR_CELLS.length;qi++){
+    if(QR_CELLS[qi]>oldPos&&QR_CELLS[qi]<=p.pos&&!p.qr[qi])p.mustStop[qi]=true;
+  }
+  renderToks();
+  addLog('<b>'+p.name+'</b> aruncă '+steps+' → căsuța <b>'+p.pos+'</b>');
+  setTimeout(function(){
+    var ev=EVENTS[p.pos];var t=ctype(p.pos);
+    if(t!=='q1'&&t!=='q2'&&t!=='q3'&&ev){
+      if(ev.t==='boost'||ev.t==='back'){
+        addLog((ev.t==='boost'?'⬆':'⬇')+' <b>'+ev.l+'</b>');
+        p.pos=Math.max(0,Math.min(p.pos+(ev.m||0),TOTAL-1));renderToks();
+      } else {p.skips=1;addLog('⏸ <b>'+ev.l+'</b>: sari un tur');}
+    }
+    if(p.pos===TOTAL-1){
+      var sp=getPendingCP(p);
+      if(sp>=0){addLog('🛑 <b>'+p.name+'</b> completează Checkpoint '+(sp+1)+' înainte de finish!');renderPlayers();rolling=false;setTimeout(function(){openCP(sp);},300);return;}
+      showWinner(p);return;
+    }
+    var pend=getPendingCP(p);
+    if(pend>=0){addLog('🛑 <b>'+p.name+'</b> s-a oprit la Checkpoint '+(pend+1)+'!');renderPlayers();rolling=false;setTimeout(function(){openCP(pend);},300);return;}
+    renderPlayers();rolling=false;nextTurn();
+  },400);
+}
+
+function nextTurn(){
+  totalRolls++;
+  curP=(curP+1)%players.length;
+  var tries=0;
+  while(players[curP].finished&&tries<players.length){curP=(curP+1)%players.length;tries++;}
+  var p=players[curP];
+  document.getElementById('tAvatar').textContent=p.avatar;
+  document.getElementById('tName').textContent=p.name;
+  document.getElementById('tPos').textContent='căsuța '+p.pos;
+  document.getElementById('rollBtn').disabled=false;rolling=false;renderPlayers();
+  if(totalRolls>0&&totalRolls%5===0){
+    document.getElementById('rollBtn').disabled=true;
+    setTimeout(function(){openSurprise(function(){document.getElementById('rollBtn').disabled=false;});},400);
+  }
+}
+
+function showWinner(p){
+  if(finishedPlayers.indexOf(p)<0)finishedPlayers.push(p);
+  p.finished=true;
+  var remaining=players.filter(function(pl){return !pl.finished;});
+  document.getElementById('winOverlay').classList.add('open');
+  document.getElementById('winTitle').textContent='🏆 '+p.avatar+' '+p.name+' a terminat!';
+  var place=finishedPlayers.length;
+  var placeStr=place===1?'🥇 Locul 1':place===2?'🥈 Locul 2':place===3?'🥉 Locul 3':'Locul '+place;
+  if(remaining.length>0){
+    document.getElementById('winSub').textContent=placeStr+' din '+players.length+' jucători! Mai sunt '+remaining.length+' jucători în joc. Poți vedea raportul tău sau continuă jocul.';
+    document.getElementById('winContinueBtn').style.display='block';
+  } else {
+    document.getElementById('winSub').textContent=placeStr+'! Toți au terminat. Raportul tău personalizat te așteaptă!';
+    document.getElementById('winContinueBtn').style.display='none';
+  }
+  document.getElementById('rollBtn').disabled=true;
+  addLog('🏆 <b>'+p.name+'</b> a terminat — locul '+place+'!');
+}
+
+/* ============================================================
+   CHECKPOINT
+============================================================ */
+function openCP(idx){
+  cpIdx=idx;
+  var info=CP_INFO[idx];var p=players[curP];
+  document.getElementById('cpIcon').textContent=info.icon;
+  document.getElementById('cpTitle').textContent=info.title;
+  document.getElementById('cpWho').innerHTML=p.avatar+' <b>'+p.name+'</b> s-a oprit!';
+  document.getElementById('cpStartBtn').style.background=info.color;
+  document.getElementById('cpStartBtn').textContent='✏️ Completează Quiz '+(idx+1)+' acum';
+  document.getElementById('cpOverlay').classList.add('open');
+}
+function cpMarkDone(){
+  var p=players[curP];
+  p.qr[cpIdx]=true;p.mustStop[cpIdx]=false;
+  document.getElementById('cpOverlay').classList.remove('open');
+  addLog('✅ <b>'+p.name+'</b> a finalizat Checkpoint '+(cpIdx+1)+'!');
+  var more=getPendingCP(p);
+  if(more>=0){setTimeout(function(){openCP(more);},300);return;}
+  if(p.pos===TOTAL-1){showWinner(p);return;}
+  renderPlayers();rolling=false;nextTurn();
+}
+
+/* ============================================================
+   QUIZ
+============================================================ */
+function openQuiz(idx){
+  activeQ=idx;qAns=[];
+  var q=QUIZZES[idx];var info=CP_INFO[idx];
+  var b=document.getElementById('qBadge');
+  b.textContent='Checkpoint '+(idx+1)+' — Quiz';b.style.background=info.bg;b.style.color=info.color;b.style.borderColor=info.color;
+  document.getElementById('qTitle').textContent=q.title;
+  document.getElementById('qDesc').textContent=q.desc;
+  document.getElementById('qProg').style.width='0%';document.getElementById('qProg').style.background=info.color;
+  document.getElementById('qSubBtn').style.background=info.color;
+  document.getElementById('qWarn').style.display='none';
+  document.getElementById('cpOverlay').classList.remove('open');
+  renderQuizQ();showScreen('s-quiz');
+}
+function renderQuizQ(){
+  var q=QUIZZES[activeQ];var sc=activeQ===0?'s1':activeQ===1?'s2':'s3';
+  var filled=0;qAns.forEach(function(a){if(a!==undefined)filled++;});
+  document.getElementById('qProg').style.width=Math.round((filled/q.q.length)*100)+'%';
+  var wrap=document.getElementById('qQuestions');wrap.innerHTML='';
+  q.q.forEach(function(question,qi){
+    var block=document.createElement('div');block.className='qblock';
+    var optsHtml='';
+    question.o.forEach(function(opt,oi){
+      var sel=qAns[qi]===oi?sc:'';
+      optsHtml+='<button type="button" class="qopt '+sel+'" data-qi="'+qi+'" data-oi="'+oi+'"><div class="qradio"><div class="qdot"></div></div><span>'+opt.l+'</span></button>';
+    });
+    block.innerHTML='<p class="qtext">'+(qi+1)+'. '+question.t+'</p><div class="qopts">'+optsHtml+'</div>';
+    wrap.appendChild(block);
+    block.querySelectorAll('.qopt').forEach(function(btn){
+      btn.addEventListener('click',function(){qAns[parseInt(btn.dataset.qi)]=parseInt(btn.dataset.oi);renderQuizQ();});
+    });
+  });
+}
+function submitQuiz(){
+  var q=QUIZZES[activeQ];
+  var filled=0;qAns.forEach(function(a){if(a!==undefined)filled++;});
+  if(filled<q.q.length){document.getElementById('qWarn').style.display='block';return;}
+  document.getElementById('qWarn').style.display='none';
+  var scores={};
+  q.q.forEach(function(question,i){
+    var sc=question.o[qAns[i]].s;
+    Object.keys(sc).forEach(function(k){scores[k]=(scores[k]||0)+sc[k];});
+  });
+  var p=players[curP];
+  p.scores[q.id]=scores;p.qr[activeQ]=true;p.mustStop[activeQ]=false;
+  addLog('✅ <b>'+p.name+'</b>: Quiz '+(activeQ+1)+' completat!');
+  showScreen('s-game');
+  var more=getPendingCP(p);
+  if(more>=0){setTimeout(function(){openCP(more);},300);return;}
+  if(p.pos===TOTAL-1){showWinner(p);return;}
+  renderPlayers();rolling=false;nextTurn();
+}
+
+/* ============================================================
+   SURPRISE
+============================================================ */
+function openSurprise(callback){
+  if(sqUsed.length>=SQ.length)sqUsed=[];
+  var available=[];for(var i=0;i<SQ.length;i++){if(sqUsed.indexOf(i)<0)available.push(i);}
+  var idx=available[Math.floor(Math.random()*available.length)];
+  sqUsed.push(idx);sqPending=callback;
+  var sq=SQ[idx];
+  document.getElementById('sqOverlay').style.borderTopColor=sq.c;
+  document.getElementById('sqEmoji').textContent=sq.e;
+  var badge=document.getElementById('sqBadge');badge.style.background=sq.bg;badge.style.color=sq.c;badge.style.borderColor=sq.c;
+  document.getElementById('sqQ').textContent=sq.q;
+  var opts=document.getElementById('sqOpts');opts.innerHTML='';
+  sq.o.forEach(function(opt){
+    var btn=document.createElement('button');btn.className='sq-opt';btn.textContent=opt;btn.style.borderColor=sq.c;
+    btn.addEventListener('click',function(){
+      opts.querySelectorAll('.sq-opt').forEach(function(b){b.style.background='';b.style.color='';});
+      btn.style.background=sq.c;btn.style.color='#fff';
+      addLog('🎉 <b>'+players[curP].name+'</b>: "'+opt+'"');
+      setTimeout(function(){document.getElementById('sqOverlay').classList.remove('open');if(sqPending)sqPending();sqPending=null;},700);
+    });
+    opts.appendChild(btn);
+  });
+  document.getElementById('sqOverlay').classList.add('open');
+}
+
+/* ============================================================
+   REPORT — private, only own player
+============================================================ */
+function computeProfile(p){
+  var s1=p.scores.q1||{},s2=p.scores.q2||{},s3=p.scores.q3||{};
+  var holland={R:0,I:0,A:0,S:0,E:0,C:0};
+  Object.keys(s1).forEach(function(k){if(holland[k]!==undefined)holland[k]+=s1[k];});
+  var values={};Object.keys(s2).forEach(function(k){var vk=vN[k]||k;values[vk]=(values[vk]||0)+s2[k];});
+  var style={};Object.keys(s3).forEach(function(k){var sk=sN[k]||k;style[sk]=(style[sk]||0)+s3[k];});
+  var topH=Object.keys(holland).sort(function(a,b){return holland[b]-holland[a];});
+  var h1=topH[0],h2=topH[1],h3=topH[2];
+  var topV=Object.keys(values).length?Object.keys(values).sort(function(a,b){return values[b]-values[a];})[0]:'Impact';
+  var topS=Object.keys(style).length?Object.keys(style).sort(function(a,b){return style[b]-style[a];})[0]:'Creativ';
+  var careers=[];
+  (cM[h1]||[]).slice(0,4).forEach(function(c){careers.push(c);});
+  (cM[h2]||[]).slice(0,4).forEach(function(c){if(careers.indexOf(c)<0)careers.push(c);});
+  return {holland:holland,topH:topH,h1:h1,h2:h2,h3:h3,values:values,topV:topV,style:style,topS:topS,careers:careers.slice(0,8)};
+}
+
+function goToResults(){
+  document.getElementById('winOverlay').classList.remove('open');
+  totalReports++;
+  var p=players[curP];
+  var prof=computeProfile(p);
+  var maxH=21;var h1=prof.h1,h2=prof.h2,h3=prof.h3;
+  var vi=vI[prof.topV]||vI['Impact'];var si=sI[prof.topS]||sI['Sistematic'];
+  var place=finishedPlayers.indexOf(p)+1;
+  var placeStr=place===1?'🥇 Locul 1':place===2?'🥈 Locul 2':place===3?'🥉 Locul 3':place>0?'Locul '+place:'—';
+  var completedQ=p.qr.filter(Boolean).length;
+  var LOGO_SRC=document.querySelector('#s-landing .land-logo').src;
+  var html='';
+
+  /* hero */
+  html+='<div class="result-hero"><div class="hero-bg-icon">'+HEMOJI[h1]+'</div>';
+  html+='<div class="hero-avatar">'+p.avatar+'</div>';
+  html+='<div class="hero-name">'+p.name+'</div>';
+  html+='<div class="hero-pills">';
+  html+='<span class="hero-pill">'+placeStr+'</span>';
+  html+='<span class="hero-pill">📝 '+completedQ+'/3 quiz-uri</span>';
+  html+='<span class="hero-pill">📍 Căsuța '+p.pos+'</span>';
+  html+='</div></div>';
+
+  /* Holland */
+  html+='<div class="rcard"><p class="rlbl">'+HEMOJI[h1]+' Tipul tău de personalitate</p>';
+  html+='<div class="h-types">';
+  html+='<div class="h-type-dom" style="background:'+HCOL[h1]+';flex:1"><div class="h-type-icon">'+HEMOJI[h1]+'</div><div class="h-type-name">'+hD[h1].n+'</div><div class="h-type-label">Dominant</div></div>';
+  html+='<div class="h-type-sec"><div class="h-type-icon">'+HEMOJI[h2]+'</div><div class="h-type-name">'+hD[h2].n+'</div><div class="h-type-label">Secundar</div></div>';
+  html+='<div class="h-type-ter"><div class="h-type-icon">'+HEMOJI[h3]+'</div><div class="h-type-name">'+hD[h3].n+'</div><div class="h-type-label">Terțiar</div></div>';
+  html+='</div>';
+  html+='<p class="h-desc" style="border-left-color:'+HCOL[h1]+'">'+hD[h1].d+'</p>';
+  prof.topH.forEach(function(k){
+    var pct=Math.round((prof.holland[k]/maxH)*100);
+    html+='<div class="brow"><span class="blbl">'+HEMOJI[k]+' '+hD[k].n+'</span><div class="btrack"><div class="bfill" style="width:'+pct+'%;background:'+HCOL[k]+'"></div></div><span class="bpct">'+pct+'%</span></div>';
+  });
+  if(FAMOUS[h1])html+='<div class="famous-box">🌟 Personalitate similară: <b style="color:'+HCOL[h1]+'">'+FAMOUS[h1]+'</b></div>';
+  html+='</div>';
+
+  /* Strengths + Growth */
+  html+='<div class="two-col">';
+  html+='<div class="rcard"><p class="rlbl">💪 Puncte forte</p>';
+  (STRENGTHS[h1]||[]).forEach(function(s){html+='<div class="strength-item"><span style="color:'+HCOL[h1]+';font-size:1rem">✓</span>'+s+'</div>';});
+  html+='</div>';
+  html+='<div class="rcard"><p class="rlbl">🌱 Dezvoltare</p>';
+  (GROWTH[h1]||[]).forEach(function(s){html+='<div class="strength-item"><span style="color:#FF8F00;font-size:1rem">→</span>'+s+'</div>';});
+  html+='</div></div>';
+
+  /* Values + Style */
+  html+='<div class="two-col">';
+  html+='<div class="rcard"><p class="rlbl">'+(VEMOJI[prof.topV]||'💎')+' Valoarea ta</p>';
+  html+='<div class="val-icon">'+(VEMOJI[prof.topV]||'💎')+'</div>';
+  html+='<div class="val-title">'+vi.l+'</div><div class="val-desc">'+vi.d+'</div></div>';
+  html+='<div class="rcard"><p class="rlbl">'+(SEMOJI[prof.topS]||'⚡')+' Stilul tău</p>';
+  html+='<div class="val-icon">'+(SEMOJI[prof.topS]||'⚡')+'</div>';
+  html+='<div class="val-title">'+si.l+'</div><div class="val-desc">'+si.d+'</div></div>';
+  html+='</div>';
+
+  /* Careers */
+  html+='<div class="rcard"><p class="rlbl">🎯 Cariere potrivite</p>';
+  html+='<div class="careers-grid">';
+  prof.careers.forEach(function(c){html+='<div class="career-pill" style="border-color:'+HCOL[h1]+';background:'+HCOL[h1]+'15">'+c+'</div>';});
+  html+='</div>';
+  html+='<div class="top3">';
+  ['🥇','🥈','🥉'].forEach(function(m,i){if(prof.careers[i])html+='<div class="top3-item"><div class="top3-medal">'+m+'</div><div class="top3-name">'+prof.careers[i]+'</div></div>';});
+  html+='</div></div>';
+
+  /* Next steps */
+  html+='<div class="rcard" style="background:linear-gradient(135deg,#EDE9FE,#FAF5FF);border-color:#6B21A8"><p class="rlbl" style="color:#6B21A8">🗺️ Pașii următori</p><div class="steps-list">';
+  ['📚 Explorează programele de studii din domeniu <b>'+hD[h1].n+'</b>','🤝 Caută un mentor sau profesionist din domeniu','🛠️ Fă un stagiu sau voluntariat pentru experiență','🎓 Participă la târguri de carieră','💻 Urmărește cursuri și comunități online din domeniu'].forEach(function(s){
+    html+='<div class="step-item">'+s+'</div>';
+  });
+  html+='</div></div>';
+
+  /* DCOC + Facebook */
+  html+='<div class="rcard dcoc-card"><img src="'+LOGO_SRC+'" class="dcoc-logo" alt="DCOC">';
+  html+='<div class="dcoc-name">Departamentul de Consiliere și Orientare pentru Carieră</div>';
+  html+='<div class="dcoc-tagline">Raport generat prin activitatea Scara Carierei</div>';
+  html+='<div class="fb-msg">😊 Dacă ți-a plăcut activitatea,<br>dă-ne un like pe Facebook!</div>';
+  html+='<a href="https://www.facebook.com/DepartamentuldeConsilieresiOrientarepentruCariera" target="_blank" class="btn-fb no-print">👍 Like pe Facebook — DCOC</a></div>';
+
+  /* Actions */
+  html+='<button class="btn-pdf no-print" onclick="savePDF()">💾 Salvează raportul ca PDF</button>';
+  html+='<div class="send-notice no-print">ℹ️ <b>Pentru a ne ajuta la îmbunătățirea aplicației</b>, te rugăm să ne transmiți rezultatele tale. Raportul nu conține date personale și se salvează doar cu numele ales în aplicație.</div>';
+  html+='<button class="btn-send no-print" id="sendReportBtn" onclick="sendReport()">📤 Trimite raportul către DCOC</button>';
+  html+='<div class="send-success" id="sendSuccess">✅ Raport trimis cu succes! Mulțumim!</div>';
+  html+='<div class="send-error" id="sendError">❌ Eroare la trimitere. Încearcă din nou.</div>';
+  html+="<button class='btn-back-game no-print' onclick='showScreen(&quot;s-game&quot;)'>← Înapoi la joc</button>";
+
+  document.getElementById('resultContent').innerHTML=html;
+  showScreen('s-result');
+}
+
+function savePDF(){
+  document.querySelectorAll('.no-print').forEach(function(e){e.dataset.disp=e.style.display;e.style.display='none';});
+  window.print();
+  document.querySelectorAll('.no-print').forEach(function(e){e.style.display=e.dataset.disp||'';});
+}
+
+/* ── SEND REPORT TO GOOGLE SHEETS ── */
+/* ⚠️ Înlocuiește URL-ul de mai jos cu URL-ul tău Google Apps Script */
+var GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxlK_d56Tcp2Ec3QHuS0w1mjKkbPAJP0KlFucEjd24PJCV9aD-N6XDzarQSo1FPyGVv/exec';
+
+function sendReport(){
+  var btn=document.getElementById('sendReportBtn');
+  var ok=document.getElementById('sendSuccess');
+  var err=document.getElementById('sendError');
+  if(!btn)return;
+
+  /* Gather current player profile */
+  var p=players[curP];
+  var prof=computeProfile(p);
+  var completedQ=p.qr.filter(Boolean).length;
+  var vi=vI[prof.topV]||vI['Impact'];
+  var si=sI[prof.topS]||sI['Sistematic'];
+
+  var payload={
+    nume: p.name,
+    avatar: p.avatar,
+    pozitie: p.pos,
+    quizuri: completedQ+'/3',
+    holland1: hD[prof.h1].n,
+    holland2: hD[prof.h2].n,
+    valoare: vi.l,
+    stil: si.l,
+    cariere: prof.careers.slice(0,4).join(', ')
+  };
+
+  /* Check URL is configured */
+  if(!GOOGLE_SCRIPT_URL||GOOGLE_SCRIPT_URL==='PUNE_AICI_URL_GOOGLE_APPS_SCRIPT'){
+    err.textContent='⚠️ URL-ul Google Script nu este configurat încă.';
+    err.style.display='block';
+    return;
+  }
+
+  btn.disabled=true;
+  btn.textContent='⏳ Se trimite...';
+  ok.style.display='none';
+  err.style.display='none';
+
+  fetch(GOOGLE_SCRIPT_URL,{
+    method:'POST',
+    mode:'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(payload)
+  })
+  .then(function(){
+    btn.style.display='none';
+    ok.style.display='block';
+    addLog('📤 <b>'+p.name+'</b> a trimis raportul către DCOC.');
+  })
+  .catch(function(){
+    btn.disabled=false;
+    btn.textContent='📤 Trimite raportul către DCOC';
+    err.textContent='❌ Eroare la trimitere. Verifică conexiunea și încearcă din nou.';
+    err.style.display='block';
+  });
+}
+
+/* ============================================================
+   TABS
+============================================================ */
+function initTabs(){
+  document.querySelectorAll('.tab-btn').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var target=btn.dataset.tab;
+      document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
+      document.querySelectorAll('.tab-content').forEach(function(t){t.classList.remove('active');});
+      btn.classList.add('active');
+      document.getElementById(target).classList.add('active');
+    });
+  });
+}
+
+/* ============================================================
+   ADMIN (Alt+A)
+============================================================ */
+document.addEventListener('keydown',function(e){
+  if(e.altKey&&(e.key==='a'||e.key==='A')){
+    var strip=document.getElementById('adminStrip');
+    strip.classList.toggle('show');
+  }
+});
+
+/* ============================================================
+   WIRE ALL EVENTS
+============================================================ */
+window.addEventListener('load',function(){
+  buildBoard();renderPlayers();initTabs();
+
+  /* LANDING */
+  document.getElementById('btnLandStart').addEventListener('click',function(){
+    buildAvatarGrid('avatarGrid',function(av){selectedAvatar=av;},AVATARS[0]);
+    showScreen('s-join');
+  });
+
+  /* JOIN */
+  document.getElementById('btnJoinBack').addEventListener('click',function(){showScreen('s-landing');});
+  document.getElementById('btnJoinConfirm').addEventListener('click',function(){
+    var name=document.getElementById('joinName').value.trim();
+    if(!name){document.getElementById('joinName').focus();return;}
+    doAddPlayer(name,selectedAvatar);
+    document.getElementById('joinName').value='';
+    selectedAvatar=AVATARS[0];
+    showScreen('s-game');
+  });
+  document.getElementById('joinName').addEventListener('keydown',function(e){
+    if(e.key==='Enter'){document.getElementById('btnJoinConfirm').click();}
+  });
+
+  /* GAME */
+  document.getElementById('rollBtn').addEventListener('click',rollDice);
+  document.getElementById('btnAddPlayerGame').addEventListener('click',function(){
+    midSelectedAvatar=AVATARS[0];
+    buildAvatarGrid('midAvatarGrid',function(av){midSelectedAvatar=av;},AVATARS[0]);
+    document.getElementById('midName').value='';
+    document.getElementById('joinMidOverlay').classList.add('open');
+  });
+  document.getElementById('btnQuickAdd').addEventListener('click',function(){
+    var n=document.getElementById('quickName').value.trim();
+    if(!n)return;
+    doAddPlayer(n,AVATARS[players.length%AVATARS.length]);
+    document.getElementById('quickName').value='';
+  });
+  document.getElementById('quickName').addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('btnQuickAdd').click();});
+  document.getElementById('btnReset').addEventListener('click',resetGame);
+
+  /* MID-GAME JOIN MODAL */
+  document.getElementById('btnMidConfirm').addEventListener('click',function(){
+    var name=document.getElementById('midName').value.trim();
+    if(!name)return;
+    doAddPlayer(name,midSelectedAvatar);
+    document.getElementById('midName').value='';
+    document.getElementById('joinMidOverlay').classList.remove('open');
+  });
+  document.getElementById('btnMidCancel').addEventListener('click',function(){document.getElementById('joinMidOverlay').classList.remove('open');});
+  document.getElementById('midName').addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('btnMidConfirm').click();});
+
+  /* CHECKPOINT */
+  document.getElementById('cpStartBtn').addEventListener('click',function(){openQuiz(cpIdx);});
+
+  /* QUIZ */
+  document.getElementById('quizBackBtn').addEventListener('click',function(){cpMarkDone();});
+  document.getElementById('qSubBtn').addEventListener('click',submitQuiz);
+
+  /* RESULT */
+  document.getElementById('resultBackBtn').addEventListener('click',function(){showScreen('s-game');});
+
+  /* WINNER */
+  document.getElementById('winReportBtn').addEventListener('click',goToResults);
+  document.getElementById('winContinueBtn').addEventListener('click',function(){
+    document.getElementById('winOverlay').classList.remove('open');
+    var unfinished=players.filter(function(pl){return !pl.finished;});
+    if(unfinished.length>0){
+      curP=players.indexOf(unfinished[0]);
+      var p=players[curP];
+      document.getElementById('tAvatar').textContent=p.avatar;
+      document.getElementById('tName').textContent=p.name;
+      document.getElementById('tPos').textContent='căsuța '+p.pos;
+      document.getElementById('rollBtn').disabled=false;rolling=false;renderPlayers();
+      addLog('▶ Continuă — rândul lui <b>'+p.name+'</b>');
+    }
+  });
+  document.getElementById('winNewBtn').addEventListener('click',function(){resetGame();document.getElementById('winOverlay').classList.remove('open');});
+});
+</script>
+</body>
+</html>
