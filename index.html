@@ -31,9 +31,15 @@ img{max-width:100%;display:block}
 
 /* ── SCREENS ── */
 .screen{display:none}
-#s-landing.active,#s-join.active{display:flex;flex-direction:column;align-items:center;min-height:100vh}
-#s-game.active{display:flex;flex-direction:column;min-height:100vh}
-#s-quiz.active,#s-result.active{display:flex;flex-direction:column;align-items:center;min-height:100vh;background:#F8F4FF}
+.screen.active{display:block}
+#s-landing.active{display:flex!important;flex-direction:column;align-items:center}
+#s-join.active{display:flex!important;flex-direction:column;align-items:center}
+#s-game.active{display:flex!important;flex-direction:column}
+#s-quiz.active{display:flex!important;flex-direction:column;align-items:center}
+#s-result.active{display:flex!important;flex-direction:column;align-items:center}
+/* merged */
+/* merged */
+/* merged */
 
 /* ── LANDING ── */
 #s-landing{background:linear-gradient(160deg,#4A1D96 0%,#6B21A8 50%,#7C3AED 100%);padding:2rem 1.25rem 3rem;text-align:center}
@@ -297,7 +303,7 @@ img{max-width:100%;display:block}
 /* PRINT */
 @media print{
   .no-print{display:none!important}
-  .screen{display:none!important}
+  /* removed duplicate */
   #s-result{display:flex!important}
   .result-wrap{max-width:100%;padding:0}
   .game-topbar,.game-tabs{display:none}
